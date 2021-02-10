@@ -1,0 +1,101 @@
+﻿@page "/"
+@using MachineLearningProjektML.Model
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <label>Manifactor</label>
+            <select @bind-value="inputData.Car" @bind-value:event="onchange" class="form-control">
+                @for (int i = 1; i < Manufactor.Count() + 1; i++)
+                {
+                    <option value="@Manufactor[i - 1]">@Manufactor[i - 1]</option>
+                }
+            </select>
+        </div>
+        <div class="col-4">
+            <label>Body Type</label>
+            <select @bind-value="inputData.Body" @bind-value:event="onchange" class="form-control">
+                @for (int i = 1; i < bodyTypes.Count() + 1; i++)
+                {
+                    <option value="@bodyTypes[i - 1]">@bodyTypes[i - 1]</option>
+                }
+            </select>
+        </div>
+        <div class="col-4">
+            <label>Miles driven</label>
+            <input type="number" class="form-control" @bind-value="inputData.Mileage"/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <label>Engine volume</label>
+            <input type="number" class="form-control" @bind-value="inputData.EngV"/>
+        </div>
+        <div class="col-4">
+            <label>Engine Type</label>
+            <select @bind-value="inputData.EngType" @bind-value:event="onchange" class="form-control">
+                <option value="Gas">Gas</option>
+                <option value="Diesel">Diesel</option>
+                <option value="Petrol">Petrol</option>
+            </select>
+        </div>
+        <div class="col-4">
+            <label>Registration</label>
+            <select @bind-value="inputData.Registration" @bind-value:event="onchange" class="form-control">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <label>Year</label>
+            <input type="number" class="form-control" @bind-value="inputData.Year"/>
+        </div>
+        <div class="col-4">
+            <label>Model</label>
+            <input class="form-control" @bind-value="inputData.Model"/>
+        </div>
+        <div class="col-4">
+            <label>Drive</label>
+            <select @bind-value="inputData.Drive" @bind-value:event="onchange" class="form-control">
+                <option value="full">Full</option>
+                <option value="rear">Rear</option>
+                <option value="front">Front</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<button class="btn btn-primary" @onclick="predict">Click me</button>
+
+<h4>@result.ToString("n2") $</h4>
+
+@code{
+    ModelInput inputData = new ModelInput();
+
+    float result;
+
+    private void predict()
+    {
+        var resultat = ConsumeModel.Predict(inputData);
+        result = resultat.Score;
+    }
+
+    public string[] Manufactor { get; set; } =
+    {
+        "Acura", "Alfa Romeo", "Aro", "Aston Martin", "Audi", "Barkas", "Bentley", "BMW", "Bogdan", "Buick", "BYD", "Cadillac", "Changan",
+        "Chery", "Chevrolet", "Chrysler", "Citroen", "Dacia", "Dadi", "Daewoo", "Daihatsu", "Dodge", "ËUAZ", "FAW", "Ferrari", "Fiat", "Fisker",
+        "Ford", "GAZ", "Geely", "GMC", "Great Wall", "Groz", "Hafei", "Honda", "Huanghai", "Hummer", "Hyundai", "Infiniti", "Isuzu", "JAC", "Jaguar",
+        "Jeep", "Kia", "Lamborghini", "Lancia", "Land Rover", "Lexus", "Lifan", "Lincoln", "Maserati", "Mazda", "Mercedes-Benz", "Mercury", "MG", "MINI",
+        "Mitsubishi", "Moskvich-AZLK", "Moskvich-Izh", "Nissan", "Opel", "Other-Retro", "Peugeot", "Porsche", "Renault", "Rolls-Royce", "Rover",
+        "Samand", "Samsung", "Seat", "Skoda", "SMA", "Smart", "SsangYong", "Subaru", "Suzuki", "Saab", "TATA", "Tesla", "Toyota", "UAZ", "VAZ",
+        "Volkswagen", "Volvo", "Wartburg", "ZAZ", "ZX"
+    };
+
+    public string[] bodyTypes { get; set; } =
+    {
+        "crossover", "hatch", "other", "sedan", "vagon", "van"
+    };
+}
