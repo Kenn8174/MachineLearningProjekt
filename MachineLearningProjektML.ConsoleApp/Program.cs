@@ -38,6 +38,9 @@ namespace MachineLearningProjektML.ConsoleApp
             Console.WriteLine($"Drive: {sampleData.Drive}");
             Console.WriteLine($"\n\nPredicted Price: {predictionResult.Score}\n\n");
             Console.WriteLine("=============== End of process, hit any key to finish ===============");
+
+            ModelBuilder.CreateModel();
+
             Console.ReadKey();
         }
     }

@@ -7,12 +7,13 @@ using System.Linq;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using MachineLearningProjektML.Model;
+using Microsoft.ML.Trainers.FastTree;
 
 namespace MachineLearningProjektML.ConsoleApp
 {
     public static class ModelBuilder
     {
-        private static string TRAIN_DATA_FILEPATH = @"C:\Users\kenne\Desktop\Machine Learning\car_ad.csv";
+        private static string TRAIN_DATA_FILEPATH = @"C:\Users\kenne\Desktop\Machine Learning Projekt\car_ad.csv";
         private static string MODEL_FILE = ConsumeModel.MLNetModelPath;
 
         // Create MLContext to be shared across the model creation workflow objects 
@@ -33,13 +34,13 @@ namespace MachineLearningProjektML.ConsoleApp
             IEstimator<ITransformer> trainingPipeline = BuildTrainingPipeline(mlContext);
 
             // Train Model
-            ITransformer mlModel = TrainModel(mlContext, trainingDataView, trainingPipeline);
+            //ITransformer mlModel = TrainModel(mlContext, trainingDataView, trainingPipeline);
 
             // Evaluate quality of Model
             Evaluate(mlContext, trainingDataView, trainingPipeline);
 
             // Save model
-            SaveModel(mlContext, mlModel, MODEL_FILE, trainingDataView.Schema);
+            //SaveModel(mlContext, mlModel, MODEL_FILE, trainingDataView.Schema);
         }
 
         public static IEstimator<ITransformer> BuildTrainingPipeline(MLContext mlContext)
@@ -55,7 +56,7 @@ namespace MachineLearningProjektML.ConsoleApp
                                       .Append(mlContext.Transforms.ReplaceMissingValues(new[] { new InputOutputColumnPair("engV", "engV") }))
                                       .Append(mlContext.Transforms.Concatenate("Features", new[] { "engType", "registration", "car_tf", "body_tf", "model_tf", "drive_tf", "engV_MissingIndicator", "engV", "mileage", "year" }));
             // Set the training algorithm 
-            var trainer = mlContext.Regression.Trainers.FastForest(numberOfLeaves: 80, minimumExampleCountPerLeaf: 10, numberOfTrees: 500, labelColumnName: @"price", featureColumnName: "Features");
+            var trainer = mlContext.Regression.Trainers.FastTreeTweedie(new FastTreeTweedieTrainer.Options() { NumberOfLeaves = 3, MinimumExampleCountPerLeaf = 50, NumberOfTrees = 500, LearningRate = 0.2916428f, Shrinkage = 0.4763383f, LabelColumnName = @"price", FeatureColumnName = "Features" });
 
             var trainingPipeline = dataProcessPipeline.Append(trainer);
 

@@ -1,74 +1,83 @@
 ﻿@page "/"
 @using MachineLearningProjektML.Model
 
+<h1 class="text-center">Дилер автомобілів Кеннета</h1>
 
-<div class="container">
-    <div class="row">
-        <div class="col-4">
-            <label>Manifactor</label>
-            <select @bind-value="inputData.Car" @bind-value:event="onchange" class="form-control">
-                @for (int i = 1; i < Manufactor.Count() + 1; i++)
-                {
-                    <option value="@Manufactor[i - 1]">@Manufactor[i - 1]</option>
-                }
-            </select>
+<div class="container mt-5">
+    <EditForm Model="inputData" OnValidSubmit="prediction">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="row mt-3">
+            <div class="col-4">
+                <label>Manufacturer:</label>
+                <select @bind-value="inputData.Car" @bind-value:event="onchange" class="form-control">
+                    <option value="">- Choose -</option>
+                    @for (int i = 1; i < Manufactor.Count() + 1; i++)
+                    {
+                        <option value="@Manufactor[i - 1]">@Manufactor[i - 1]</option>
+                    }
+                </select>
+            </div>
+            <div class="col-4">
+                <label>Body Type:</label>
+                <select @bind-value="inputData.Body" @bind-value:event="onchange" class="form-control">
+                    <option value="">- Choose -</option>
+                    @for (int i = 1; i < bodyTypes.Count() + 1; i++)
+                    {
+                        <option value="@bodyTypes[i - 1] ">@bodyTypes[i - 1]</option>
+                    }
+                </select>
+            </div>
+            <div class="col-4">
+                <label>Miles driven:</label>
+                <input class="form-control" @bind-value="inputData.Mileage" />
+            </div>
         </div>
-        <div class="col-4">
-            <label>Body Type</label>
-            <select @bind-value="inputData.Body" @bind-value:event="onchange" class="form-control">
-                @for (int i = 1; i < bodyTypes.Count() + 1; i++)
-                {
-                    <option value="@bodyTypes[i - 1]">@bodyTypes[i - 1]</option>
-                }
-            </select>
+        <div class="row mt-3">
+            <div class="col-4">
+                <label>Engine volume:</label>
+                <input class="form-control" @bind-value="inputData.EngV" />
+            </div>
+            <div class="col-4">
+                <label>Engine Type:</label>
+                <select @bind-value="inputData.EngType" @bind-value:event="onchange" class="form-control">
+                    <option value="">- Choose -</option>
+                    <option value="Gas">Gas</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="Petrol">Petrol</option>
+                </select>
+            </div>
+            <div class="col-4">
+                <label>Registration:</label>
+                <select @bind-value="inputData.Registration" @bind-value:event="onchange" class="form-control">
+                    <option value="">- Choose -</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
         </div>
-        <div class="col-4">
-            <label>Miles driven</label>
-            <input type="number" class="form-control" @bind-value="inputData.Mileage"/>
+        <div class="row mt-3">
+            <div class="col-4">
+                <label value="">Year:</label>
+                <input type="number" class="form-control" @bind-value="inputData.Year" />
+            </div>
+            <div class="col-4">
+                <label>Model:</label>
+                <input class="form-control" @bind-value="inputData.Model" />
+            </div>
+            <div class="col-4">
+                <label>Drive:</label>
+                <select @bind-value="inputData.Drive" @bind-value:event="onchange" class="form-control">
+                    <option value="">- Choose -</option>
+                    <option value="full">Full</option>
+                    <option value="rear">Rear</option>
+                    <option value="front">Front</option>
+                </select>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-4">
-            <label>Engine volume</label>
-            <input type="number" class="form-control" @bind-value="inputData.EngV"/>
-        </div>
-        <div class="col-4">
-            <label>Engine Type</label>
-            <select @bind-value="inputData.EngType" @bind-value:event="onchange" class="form-control">
-                <option value="Gas">Gas</option>
-                <option value="Diesel">Diesel</option>
-                <option value="Petrol">Petrol</option>
-            </select>
-        </div>
-        <div class="col-4">
-            <label>Registration</label>
-            <select @bind-value="inputData.Registration" @bind-value:event="onchange" class="form-control">
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-            </select>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-4">
-            <label>Year</label>
-            <input type="number" class="form-control" @bind-value="inputData.Year"/>
-        </div>
-        <div class="col-4">
-            <label>Model</label>
-            <input class="form-control" @bind-value="inputData.Model"/>
-        </div>
-        <div class="col-4">
-            <label>Drive</label>
-            <select @bind-value="inputData.Drive" @bind-value:event="onchange" class="form-control">
-                <option value="full">Full</option>
-                <option value="rear">Rear</option>
-                <option value="front">Front</option>
-            </select>
-        </div>
-    </div>
+        <button type="submit" class="btn btn-primary mt-3">Calculate</button>
+    </EditForm>
 </div>
-
-<button class="btn btn-primary" @onclick="predict">Click me</button>
 
 <h4>@result.ToString("n2") $</h4>
 
@@ -77,10 +86,13 @@
 
     float result;
 
-    private void predict()
+    private void prediction()
     {
-        var resultat = ConsumeModel.Predict(inputData);
-        result = resultat.Score;
+        if (inputData != null)
+        {
+            var resultat = ConsumeModel.Predict(inputData);
+            result = resultat.Score;
+        }
     }
 
     public string[] Manufactor { get; set; } =
